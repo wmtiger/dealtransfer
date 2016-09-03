@@ -45,21 +45,21 @@ package com.wm.net.py
 				return false;
 			}
 			_cmdId = buf.readShort();
-			var fmtLen = buf.readShort();// fmt的字符串的长度，不能比len长
+			var fmtLen:int = buf.readShort();// fmt的字符串的长度，不能比len长
 			if (len > 0 && len >= fmtLen)
 			{
 				_content.writeBytes(buf, buf.position, len);
 				_fmt = _content.readUTFBytes(fmtLen);
 				buf.position += len;
 				_content.position = fmtLen;// 从fmt长度之后，开始读正式数据
-				buildDataRaw();// 按fmt顺序将获取到的参数读出，放入data列表
+				buildContentToData();// 按fmt顺序将获取到的参数读出，放入data列表
 			}
 			return true;
 		}
 		
 		public function pack():ByteArray
 		{
-			buildContent();
+			buildDataToContent();
 			var bytes:ByteArray = new ByteArrayLittle();
 			bytes.writeInt(_content.length);
 			bytes.writeShort(_cmdId);
@@ -68,7 +68,7 @@ package com.wm.net.py
 			return bytes;
 		}
 		
-		private function buildContent():void
+		private function buildDataToContent():void
 		{
 			// 将fmt改成展开的fmt格式，s类型不加前缀数字，比如: 3i2hss -> iiihhss
 			var fmtRes:String = CmdConst.CMD_FMT[_cmdId];
@@ -85,24 +85,38 @@ package com.wm.net.py
 				throw new Error("数据定义格式长度 与 具体数据长度 不符合!写入失败!");
 				return;
 			}
+			_fmt = getReadFmt(fmtArray);
+			_content.writeUTFBytes(_fmt);
 			// 将data写入content的bytearray格式
 			setData(fmtArray, 1);
-			
-			_fmt = "";
+		}
+		
+		private function getReadFmt(fmtArray:Array):String
+		{
+			var fmt:String = "";
+			var i:int = 0;
+			var idx:int = 0;
 			for (i = 0; i < fmtArray.length; i++) 
 			{
 				var tempCell:Object = fmtArray[i];
+				idx += tempCell['num'];
+				if (tempCell['type'] == "s") 
+				{
+					tempCell['num'] = _data[idx].length;
+				}
+				
 				if (tempCell['num'] > 1) 
 				{
-					_fmt += (tempCell['num'] + tempCell['type']);
+					fmt += (tempCell['num'] + tempCell['type']);
 				}else
 				{
-					_fmt += (tempCell['type']);
+					fmt += (tempCell['type']);
 				}
 			}
+			return fmt;
 		}
 		
-		private function buildDataRaw():void 
+		private function buildContentToData():void 
 		{
 			if (_fmt && _fmt.length > 0 && _content && _content.length > 0) 
 			{
@@ -142,15 +156,16 @@ package com.wm.net.py
 		/** type=0: read; type = 1: write */
 		private function setData(fmtArray:Array, type:int = 0):void
 		{
-			len = fmtArray.length;
+			var len:int = fmtArray.length;
 			var j:int;
+			var i:int;
 			var dataIdx:int = 0;
 			for (i = 0; i < len; i++) 
 			{
 				var tempCell:Object = fmtArray[i];
 				var num:int = tempCell['num'];
-				var type:String = tempCell['type'];
-				switch (type) 
+				var fmtType:String = tempCell['type'] + "";
+				switch (fmtType) 
 				{
 					case "h":
 						for (j = 0; j < num; j++) 
