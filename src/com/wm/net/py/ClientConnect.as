@@ -22,6 +22,10 @@ package com.wm.net.py {
 			_cliSkt.addEventListener(ProgressEvent.SOCKET_DATA, onSocketData);
 			_cliSkt.addEventListener(Event.CLOSE, onClosed);
 			_bufData  = new ByteArrayLittle();
+			
+			var p:Packet = new Packet(3001);//2ishhhs
+			p.data = [10, 20, "hello", 1, 2, 3, "tiger"];
+			send(p);
 		}
 		
 		public static function addConnect(cliSkt:Socket):void

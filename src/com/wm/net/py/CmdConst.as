@@ -13,7 +13,9 @@ package com.wm.net.py
 			1002: 's',		// send card info to server : carddata
 			
 			2001: 'h',		// login result: 0 or 1
-			2002: 'h'		// send card info result: 0 or 1
+			2002: 'h',		// send card info result: 0 or 1
+			
+			3001: '2ishhhs'		// test
 		};
 		
 		public function CmdConst() 

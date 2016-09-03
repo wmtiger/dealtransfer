@@ -99,10 +99,13 @@ package com.wm.net.py
 			for (i = 0; i < fmtArray.length; i++) 
 			{
 				var tempCell:Object = fmtArray[i];
-				idx += tempCell['num'];
 				if (tempCell['type'] == "s") 
 				{
 					tempCell['num'] = _data[idx].length;
+					idx += 1;
+				}else
+				{
+					idx += tempCell['num'];
 				}
 				
 				if (tempCell['num'] > 1) 
@@ -136,16 +139,16 @@ package com.wm.net.py
 			var tempCellFmt:Object;// 格式为: {num:2, type:s}
 			for (var i:int = 0; i < len; i++) 
 			{
-				cc = _fmt.charCodeAt(i);
+				cc = fmt.charCodeAt(i);
 				if (cc >= 48 && cc <= 57) 
 				{
 					// number 0-9
-					tempNum += _fmt.charAt(i);
+					tempNum += fmt.charAt(i);
 				}else if ((cc >= 65 && cc <= 90) || (cc >= 97 && cc <= 122))
 				{
 					tempCellFmt = { };
 					tempCellFmt['num'] = tempNum.length > 0 ? int(tempNum) : 1;
-					tempCellFmt['type'] = _fmt.charAt(i);
+					tempCellFmt['type'] = fmt.charAt(i);
 					fmtArray.push(tempCellFmt);
 					tempNum = "";
 				}
@@ -215,6 +218,16 @@ package com.wm.net.py
 					break;
 				}
 			}
+		}
+		
+		public function get data():Array 
+		{
+			return _data;
+		}
+		
+		public function set data(value:Array):void 
+		{
+			_data = value;
 		}
 		
 	}
