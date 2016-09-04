@@ -230,6 +230,11 @@ package com.wm.net.py
 			_data = value;
 		}
 		
+		public function get cmdId():int 
+		{
+			return _cmdId;
+		}
+		
 	}
 
 }

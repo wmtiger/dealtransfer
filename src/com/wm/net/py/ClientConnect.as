@@ -1,4 +1,5 @@
 package com.wm.net.py {
+	import com.wm.utils.Log;
 	import flash.errors.IOError;
 	import flash.events.Event;
 	import flash.events.ProgressEvent;
@@ -23,9 +24,6 @@ package com.wm.net.py {
 			_cliSkt.addEventListener(Event.CLOSE, onClosed);
 			_bufData  = new ByteArrayLittle();
 			
-			var p:Packet = new Packet(3001);//2ishhhs
-			p.data = [10, 20, "hello", 1, 2, 3, "tiger"];
-			send(p);
 		}
 		
 		public static function addConnect(cliSkt:Socket):void
@@ -33,10 +31,18 @@ package com.wm.net.py {
 			var conn:ClientConnect = ClientConnect.CONNECTS[cliSkt];
 			if (conn) 
 			{
-				trace("已经有过链接了，要删掉前面的。");
+				Log.info("已经有过链接了，要删掉前面的。");
 				conn.disposeClient(cliSkt);
 			}
-			ClientConnect.CONNECTS[cliSkt] = new ClientConnect(cliSkt);
+			conn = new ClientConnect(cliSkt);
+			ClientConnect.CONNECTS[cliSkt] = conn;
+			
+			var p:Packet = new Packet(3001);//2ishhhs
+			p.data = [10, 20, "hello", 1, 2, 3, "tiger"];
+			//var buf:ByteArray = p.pack();
+			//var pk:Packet = Packet.buildPacket(buf as ByteArrayLittle);
+			//Log.info("===>pk.cmdId: "+pk.cmdId+"pk.data: "+ pk.data);
+			conn.send(p);
 		}
 		
 		protected function onSocketData(event:ProgressEvent):void
@@ -78,6 +84,7 @@ package com.wm.net.py {
 			cliSkt.close();
 			ClientConnect.CONNECTS[cliSkt] = null;
 			delete ClientConnect.CONNECTS[cliSkt];
+			Log.info("closed connection");
 		}
 		
 		public function send(p:Packet):void
@@ -92,7 +99,7 @@ package com.wm.net.py {
 				} 
 				catch (e : IOError) 
 				{
-					trace("connect error："+e.getStackTrace());
+					Log.err("connect error："+e.getStackTrace());
 				}
 			}
 		}
