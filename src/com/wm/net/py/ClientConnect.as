@@ -1,4 +1,7 @@
 package com.wm.net.py {
+	import com.wm.deal.clients.ClientUser;
+	import com.wm.deal.cmd.core.CmdFactory;
+	import com.wm.deal.cmd.CmdWelcome;
 	import com.wm.utils.Log;
 	import flash.errors.IOError;
 	import flash.events.Event;
@@ -15,6 +18,7 @@ package com.wm.net.py {
 		public static var CONNECTS:Dictionary = new Dictionary(true);
 		private var _bufData:ByteArrayLittle;
 		private var _cliSkt:Socket;
+		private var _user:ClientUser;
 		
 		public function ClientConnect(cliSkt:Socket) 
 		{
@@ -23,7 +27,7 @@ package com.wm.net.py {
 			_cliSkt.addEventListener(ProgressEvent.SOCKET_DATA, onSocketData);
 			_cliSkt.addEventListener(Event.CLOSE, onClosed);
 			_bufData  = new ByteArrayLittle();
-			
+			_user = new ClientUser();
 		}
 		
 		public static function addConnect(cliSkt:Socket):void
@@ -37,12 +41,7 @@ package com.wm.net.py {
 			conn = new ClientConnect(cliSkt);
 			ClientConnect.CONNECTS[cliSkt] = conn;
 			
-			var p:Packet = new Packet(3001);//2ishhhs
-			p.data = [10, 20, "hello", 1, 2, 3, "tiger"];
-			//var buf:ByteArray = p.pack();
-			//var pk:Packet = Packet.buildPacket(buf as ByteArrayLittle);
-			//Log.info("===>pk.cmdId: "+pk.cmdId+"pk.data: "+ pk.data);
-			conn.send(p);
+			CmdFactory.addCmd(2003, conn, CmdWelcome).sendCmd();
 		}
 		
 		protected function onSocketData(event:ProgressEvent):void
@@ -52,6 +51,14 @@ package com.wm.net.py {
 			var pk:Packet = Packet.buildPacket(_bufData);
 			while (pk != null)
 			{
+				var cls:* = CmdConst.CMD_FMT[pk.cmdId][1];
+				if (cls) 
+				{
+					CmdFactory.addCmd(pk.cmdId, this, cls).cmdHandler(pk);
+				}else
+				{
+					Log.err("没有定义回调")
+				}
 				if (_bufData == null) 
 				{
 					return;
@@ -82,6 +89,9 @@ package com.wm.net.py {
 			cliSkt.removeEventListener(ProgressEvent.SOCKET_DATA, onSocketData);
 			cliSkt.removeEventListener(Event.CLOSE, onClosed);
 			cliSkt.close();
+			_bufData = null;
+			_cliSkt = null;
+			CmdFactory.removeConn(this);
 			ClientConnect.CONNECTS[cliSkt] = null;
 			delete ClientConnect.CONNECTS[cliSkt];
 			Log.info("closed connection");
@@ -102,6 +112,11 @@ package com.wm.net.py {
 					Log.err("connect error："+e.getStackTrace());
 				}
 			}
+		}
+		
+		public function get user():ClientUser 
+		{
+			return _user;
 		}
 		
 		

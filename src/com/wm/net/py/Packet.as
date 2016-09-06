@@ -49,6 +49,7 @@ package com.wm.net.py
 			if (len > 0 && len >= fmtLen)
 			{
 				_content.writeBytes(buf, buf.position, len);
+				_content.position = 0;
 				_fmt = _content.readUTFBytes(fmtLen);
 				buf.position += len;
 				_content.position = fmtLen;// 从fmt长度之后，开始读正式数据
@@ -71,7 +72,7 @@ package com.wm.net.py
 		private function buildDataToContent():void
 		{
 			// 将fmt改成展开的fmt格式，s类型不加前缀数字，比如: 3i2hss -> iiihhss
-			var fmtRes:String = CmdConst.CMD_FMT[_cmdId];
+			var fmtRes:String = CmdConst.CMD_FMT[_cmdId][0];
 			var fmtArray:Array = getFmtArray(fmtRes);
 			var i:int;
 			var total:int = 0;

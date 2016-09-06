@@ -1,31 +1,22 @@
 package
 {
-	import com.wm.net.py.ByteArrayLittle;
 	import com.wm.net.py.ClientConnect;
-	import com.wm.net.py.Packet;
 	import com.wm.utils.Log;
 	import flash.display.Sprite;
 	import flash.events.ServerSocketConnectEvent;
 	import flash.net.ServerSocket;
 	import flash.net.Socket;
 	import flash.text.TextField;
-	import flash.utils.ByteArray;
 	
 	public class Main extends Sprite
 	{
 		private var svrSkt:ServerSocket;
 		private var _log:TextField;
+		private var _thumb:Sprite;
 		
 		public function Main()
 		{
-			/*
-			var p:Packet = new Packet(3001);//2ishhhs
-			p.data = [10, 20, "hello", 1, 2, 3, "tiger"];
-			var buf:ByteArray = p.pack();
-			var pk:Packet = Packet.buildPacket(buf as ByteArrayLittle);
-			trace(pk.cmdId, pk.data);
-			return ;
-			*/ 
+			
 			
 			svrSkt = new ServerSocket();
 			svrSkt.addEventListener(ServerSocketConnectEvent.CONNECT, onClientConnect);
@@ -38,8 +29,13 @@ package
 			_log.height = 500;
 			_log.border = true;
 			_log.scrollV = _log.maxScrollV;
-			trace(_log.scrollV);
 			Log.log = _log;
+			
+			_thumb = new Sprite();
+			addChild(_thumb);
+			_thumb.x = 400;
+			Log.thumbView = _thumb;
+			
 			Log.info('==** server socket start **=='); 
 		}
 		
