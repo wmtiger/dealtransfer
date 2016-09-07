@@ -16,8 +16,6 @@ package
 		
 		public function Main()
 		{
-			
-			
 			svrSkt = new ServerSocket();
 			svrSkt.addEventListener(ServerSocketConnectEvent.CONNECT, onClientConnect);
 			svrSkt.bind(9986);

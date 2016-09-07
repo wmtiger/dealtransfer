@@ -2,6 +2,7 @@ package com.wm.deal.cmd
 {
 	import com.wm.deal.cmd.core.BaseCmdHandler;
 	import com.wm.net.py.Packet;
+	import com.wm.utils.Log;
 	
 	/**
 	 * ...
@@ -18,7 +19,7 @@ package com.wm.deal.cmd
 		
 		override public function cmdHandler(p:Packet = null):void
 		{
-			//Log.info("===>pk.cmdId: "+pk.cmdId+"pk.data: "+ pk.data);
+			Log.info("===>pk.cmdId: "+p.cmdId+"pk.data: "+ p.data);
 		}
 		
 		override public function sendCmd(params:Array = null):void

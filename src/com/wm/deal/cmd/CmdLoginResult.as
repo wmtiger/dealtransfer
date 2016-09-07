@@ -1,8 +1,10 @@
 package com.wm.deal.cmd 
 {
 	import com.wm.deal.cmd.core.BaseCmdHandler;
+	import com.wm.deal.cmd.core.CmdFactory;
 	import com.wm.net.py.Packet;
 	import com.wm.utils.Log;
+	import flash.utils.setTimeout;
 	/**
 	 * ...
 	 * @author wmTiger
@@ -33,8 +35,14 @@ package com.wm.deal.cmd
 			}
 			
 			_clientConn.send(p);
+			
+			setTimeout(testStartDeal, 3000);// 延迟3秒要求client发手牌数据来,test
 		}
 		
+		private function testStartDeal():void
+		{
+			CmdFactory.addCmd(2004, _clientConn, CmdStartDeal).sendCmd([0]);// 为0，要求client发送手牌数据过来
+		}
 		
 	}
 
