@@ -15,8 +15,8 @@ package com.wm.net.py
 		public static const CMD_FMT:Object =
 		{
 			// client 发送过来的命令
-		1001: ['ss', CmdLoginResult],		// login : name | pwd
-		1002: ['hs', CmdSendCardInfoResult],		// send card info to server:h=[0,1,2,3]
+		1001: ['hs', CmdLoginResult],		// login : name | pwd
+		1002: ['hhs', CmdSendCardInfoResult],		// send card info to server:[0]h=position;[1]h=[0,1,2,3];s=cardinfo
 			
 			// 发送到client的命令
 		2001: ['h', CmdLoginResult],		// login result: 0 or 1

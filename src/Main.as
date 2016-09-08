@@ -1,5 +1,6 @@
 package
 {
+	import com.wm.deal.ui.ActionView;
 	import com.wm.net.py.ClientConnect;
 	import com.wm.utils.Log;
 	import flash.display.Sprite;
@@ -13,6 +14,7 @@ package
 		private var svrSkt:ServerSocket;
 		private var _log:TextField;
 		private var _thumb:Sprite;
+		private var _handActionView:ActionView;
 		
 		public function Main()
 		{
@@ -33,6 +35,10 @@ package
 			addChild(_thumb);
 			_thumb.x = 400;
 			Log.thumbView = _thumb;
+			
+			_handActionView = new ActionView();
+			addChild(_handActionView);
+			_handActionView.y = 520;
 			
 			Log.info('==** server socket start **=='); 
 		}

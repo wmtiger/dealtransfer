@@ -21,7 +21,8 @@ package com.wm.deal.cmd
 		{
 			Log.info(this + p.data[0] + "has login!==>p.cmdId: " + p.cmdId + "p.data: " + p.data);
 			
-			_clientConn.user.userName = p.data[0];
+			_clientConn.user.userPosition = p.data[0];
+			_clientConn.user.userName = p.data[1];
 			
 			sendCmd();// 返回成功登陆到客户端
 		}
@@ -36,7 +37,7 @@ package com.wm.deal.cmd
 			
 			_clientConn.send(p);
 			
-			setTimeout(testStartDeal, 3000);// 延迟3秒要求client发手牌数据来,test
+			//setTimeout(testStartDeal, 3000);// 延迟3秒要求client发手牌数据来,test
 		}
 		
 		private function testStartDeal():void
